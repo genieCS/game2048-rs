@@ -5,6 +5,7 @@ use cursive::{
     Printer, XY,
 };
 use std::collections::HashMap;
+use rand::Rng;
 
 #[derive(Debug)]
 pub struct Board {
@@ -46,17 +47,14 @@ impl Board {
         {
             printer.with_color(background_style, |printer| {
                 printer.print((0,4*i), "o------o------o------o------o");
-                for j in (0..4)
+                for j in (0..5)
                 .into_iter()
                 {
                     printer.print((7*j,4*i+1), "|");
                     printer.print((7*j,4*i+2), "|");
                     printer.print((7*j,4*i+3), "|");
 
-                }
-                printer.print((28,4*i+1), "|");
-                printer.print((28,4*i+2), "|");
-                printer.print((28,4*i+3), "|");              
+                }        
             });
         };
         printer.with_color(background_style, |printer| {
@@ -64,7 +62,7 @@ impl Board {
         });
     }
 
-    fn fill_board(&self, printer: &Printer) {
+    fn draw_board(&self, printer: &Printer) {
         for i in (0..4)
         .into_iter()
         {
@@ -84,12 +82,24 @@ impl Board {
             }
         }
     }
+    pub fn insert(&mut self) {
+            let mut rng = rand::thread_rng();
+            let mut r = rng.gen_range(0..4);
+            let mut c = rng.gen_range(0..4);
+            while self.data[r][c] != 0 {
+                r = rng.gen_range(0..4);
+                c = rng.gen_range(0..4);
+            }
+            let vals = vec![2,4];
+            let val = vals[rng.gen_range(0..2)];
+            self.data[r][c] = val;
+    }
 }
 
 impl View for Board {
     fn draw(&self, printer: &Printer) {
         self.draw_background(printer);
-        self.fill_board(printer);
+        self.draw_board(printer);
     }
 
 

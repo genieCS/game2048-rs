@@ -11,7 +11,9 @@ pub fn run() {
 
     siv.add_global_callback('q', |s| s.quit());
 
-    let board: Board = Board::new();   
+    let mut board: Board = Board::new();   
+    board.insert();
+    board.insert();
 
     let view = Dialog::around(
         LinearLayout::vertical()
