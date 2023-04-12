@@ -191,7 +191,9 @@ impl Board {
     }
 
     fn push_right(&mut self) {
-        println!("right");
+        self.swap_lr();
+        self.push_left();
+        self.swap_lr();
     }
 
     fn push_up(&mut self) {
@@ -200,6 +202,16 @@ impl Board {
 
     fn push_down(&mut self) {
         println!("down");
+    }
+
+    fn swap_lr(&mut self) {
+        for r in (0..4).into_iter() {
+            for c in (0..2).into_iter() {
+                let tmp = self.data[r][c];
+                self.data[r][c] = self.data[r][3 - c];
+                self.data[r][3 - c] = tmp;
+            }
+        }
     }
 }
 
