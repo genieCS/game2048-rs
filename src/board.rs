@@ -94,6 +94,21 @@ impl Board {
             let val = vals[rng.gen_range(0..2)];
             self.data[r][c] = val;
     }
+
+    pub fn is_full(&self) -> bool {
+        for i in (0..4)
+        .into_iter()
+        {
+            for j in (0..4)
+            .into_iter()
+            {
+                if self.data[i][j] == 0 {
+                    return false;
+                }
+            }
+        }
+        true
+    }
 }
 
 impl View for Board {
