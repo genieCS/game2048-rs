@@ -1,11 +1,10 @@
 use cursive::{
     event::{Event, EventResult},
-    theme::{ Color, ColorStyle},
-    View,
-    Printer, XY,
+    theme::{Color, ColorStyle},
+    Printer, View, XY,
 };
-use std::collections::HashMap;
 use rand::Rng;
+use std::collections::HashMap;
 
 #[derive(Debug)]
 enum LRUD {
@@ -25,91 +24,110 @@ impl Board {
     pub fn new() -> Self {
         let data: [[u32; 4]; 4] = [[0; 4]; 4];
         let num2color = Self::init_num2color();
-        Self {
-            data,
-            num2color,
-        }
+        Self { data, num2color }
     }
 
     pub fn init_num2color() -> HashMap<u32, ColorStyle> {
         let mut map = HashMap::new();
-        map.insert(0, ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(255, 0, 0)));  // Red
-        map.insert(2, ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(255, 165, 0)));   // Orange
-        map.insert(4, ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(255, 255, 0)));    // Yellow
-        map.insert(8, ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(0, 255, 0)));      // Green
-        map.insert(16, ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(0, 255, 255)));    // Cyan
-        map.insert(32, ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(0, 0, 255)));      // Blue
-        map.insert(64, ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(128, 0, 128)));    // Purple
-        map.insert(128, ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(255, 0, 255)));    // Magenta
-        map.insert(256, ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(128, 128, 128)));  // Gray
-        map.insert(512, ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(255, 255, 255)));  // White
-        map.insert(1024, ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(255, 192, 203)));  // Pink
-        map.insert(2048, ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(255, 0, 128)));  // Rose
+        map.insert(
+            0,
+            ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(255, 0, 0)),
+        ); // Red
+        map.insert(
+            2,
+            ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(255, 165, 0)),
+        ); // Orange
+        map.insert(
+            4,
+            ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(255, 255, 0)),
+        ); // Yellow
+        map.insert(
+            8,
+            ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(0, 255, 0)),
+        ); // Green
+        map.insert(
+            16,
+            ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(0, 255, 255)),
+        ); // Cyan
+        map.insert(
+            32,
+            ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(0, 0, 255)),
+        ); // Blue
+        map.insert(
+            64,
+            ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(128, 0, 128)),
+        ); // Purple
+        map.insert(
+            128,
+            ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(255, 0, 255)),
+        ); // Magenta
+        map.insert(
+            256,
+            ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(128, 128, 128)),
+        ); // Gray
+        map.insert(
+            512,
+            ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(255, 255, 255)),
+        ); // White
+        map.insert(
+            1024,
+            ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(255, 192, 203)),
+        ); // Pink
+        map.insert(
+            2048,
+            ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(255, 0, 128)),
+        ); // Rose
         map
     }
 
     fn draw_background(&self, printer: &Printer) {
         let background_style = ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(188, 173, 159));
-        for i in (0..4)
-        .into_iter()
-        {
+        for i in (0..4).into_iter() {
             printer.with_color(background_style, |printer| {
-                printer.print((0,4*i), "o------o------o------o------o");
-                for j in (0..5)
-                .into_iter()
-                {
-                    printer.print((7*j,4*i+1), "|");
-                    printer.print((7*j,4*i+2), "|");
-                    printer.print((7*j,4*i+3), "|");
-
-                }        
+                printer.print((0, 4 * i), "o------o------o------o------o");
+                for j in (0..5).into_iter() {
+                    printer.print((7 * j, 4 * i + 1), "|");
+                    printer.print((7 * j, 4 * i + 2), "|");
+                    printer.print((7 * j, 4 * i + 3), "|");
+                }
             });
-        };
+        }
         printer.with_color(background_style, |printer| {
-            printer.print(XY::new(0,16), "o------o------o------o------o");
+            printer.print(XY::new(0, 16), "o------o------o------o------o");
         });
     }
 
     fn draw_board(&self, printer: &Printer) {
-        for i in (0..4)
-        .into_iter()
-        {
-            for j in (0..4)
-            .into_iter()
-            {
+        for i in (0..4).into_iter() {
+            for j in (0..4).into_iter() {
                 let num = self.data[i][j];
                 let color_style = self.num2color.get(&num).unwrap();
                 let num_str = &num.to_string();
-                let num = if num == 0 {""} else { num_str };
+                let num = if num == 0 { "" } else { num_str };
                 printer.with_color(*color_style, |printer| {
-                    printer.print((7*j+1,4*i+1), "      ");
-                    printer.print((7*j+1,4*i+2), &format!(" {:>4} ", num));
-                    printer.print((7*j+1,4*i+3), "      ");
-
+                    printer.print((7 * j + 1, 4 * i + 1), "      ");
+                    printer.print((7 * j + 1, 4 * i + 2), &format!(" {:>4} ", num));
+                    printer.print((7 * j + 1, 4 * i + 3), "      ");
                 });
             }
         }
     }
     pub fn insert(&mut self) {
-            let mut rng = rand::thread_rng();
-            let mut r = rng.gen_range(0..4);
-            let mut c = rng.gen_range(0..4);
-            while self.data[r][c] != 0 {
-                r = rng.gen_range(0..4);
-                c = rng.gen_range(0..4);
-            }
-            let vals = vec![2,4];
-            let val = vals[rng.gen_range(0..2)];
-            self.data[r][c] = val;
+        let mut rng = rand::thread_rng();
+        let mut r = rng.gen_range(0..4);
+        let mut c = rng.gen_range(0..4);
+        while self.data[r][c] != 0 {
+            r = rng.gen_range(0..4);
+            c = rng.gen_range(0..4);
+        }
+        let vals = vec![2, 4];
+        let val = vals[rng.gen_range(0..2)];
+        self.data[r][c] = val;
     }
 
     pub fn is_full(&self) -> bool {
-        for i in (0..4)
-        .into_iter()
-        {
-            for j in (0..4)
-            .into_iter()
-            {
+        for i in (0..4).into_iter() {
+            for j in (0..4).into_iter() {
                 if self.data[i][j] == 0 {
                     return false;
                 }
@@ -128,8 +146,48 @@ impl Board {
         self.insert();
     }
 
-    fn push_left(&mut self) {
-        println!("left");
+    pub fn push_left(&mut self) {
+        for r in (0..4).into_iter() {
+            let mut i = 0;
+            while i < 3 {
+                if self.data[r][i] == 0 {
+                    i += 1;
+                    continue;
+                }
+                let mut j = i + 1;
+                while j < 4 && self.data[r][j] == 0 {
+                    j += 1;
+                }
+                if j == 4 {
+                    break;
+                } 
+                if self.data[r][i] == self.data[r][j] {
+                    self.data[r][i] *= 2;
+                    self.data[r][j] = 0;
+                    i = j + 1;
+                } else {
+                    i = j;
+                }
+            }
+
+            let mut i = 0;
+            while i < 4 {
+                if self.data[r][i] != 0 {
+                    i += 1;
+                    continue;
+                }
+                let mut j = i + 1;
+                while j < 4 && self.data[r][j] == 0 {
+                    j += 1;
+                }
+                if j == 4 {
+                    break;
+                }
+                self.data[r][i] = self.data[r][j];
+                self.data[r][j] = 0;
+                i = j + 1;
+            }
+        }
     }
 
     fn push_right(&mut self) {
@@ -178,9 +236,9 @@ impl View for Board {
     }
 
     fn take_focus(
-            &mut self,
-            _source: cursive::direction::Direction,
-        ) -> Result<EventResult, cursive::view::CannotFocus> {
+        &mut self,
+        _source: cursive::direction::Direction,
+    ) -> Result<EventResult, cursive::view::CannotFocus> {
         Ok(EventResult::Consumed(None))
     }
 }
