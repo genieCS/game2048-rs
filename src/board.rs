@@ -143,10 +143,14 @@ impl Board {
             LRUD::Up => self.push_up(),
             LRUD::Down => self.push_down(),
         }
+        if self.is_full() {
+            println!("Game Over!");
+            return
+        }
         self.insert();
     }
 
-    pub fn push_left(&mut self) {
+    fn push_left(&mut self) {
         for r in (0..4).into_iter() {
             let mut i = 0;
             while i < 3 {
