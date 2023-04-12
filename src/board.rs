@@ -8,6 +8,14 @@ use std::collections::HashMap;
 use rand::Rng;
 
 #[derive(Debug)]
+enum LRUD {
+    Left,
+    Right,
+    Up,
+    Down,
+}
+
+#[derive(Debug)]
 pub struct Board {
     pub data: [[u32; 4]; 4],
     pub num2color: HashMap<u32, ColorStyle>,
@@ -109,6 +117,32 @@ impl Board {
         }
         true
     }
+
+    fn push(&mut self, lrud: LRUD) {
+        match lrud {
+            LRUD::Left => self.push_left(),
+            LRUD::Right=> self.push_right(),
+            LRUD::Up => self.push_up(),
+            LRUD::Down => self.push_down(),
+        }
+        self.insert();
+    }
+
+    fn push_left(&mut self) {
+        println!("left");
+    }
+
+    fn push_right(&mut self) {
+        println!("right");
+    }
+
+    fn push_up(&mut self) {
+        println!("up");
+    }
+
+    fn push_down(&mut self) {
+        println!("down");
+    }
 }
 
 impl View for Board {
@@ -117,14 +151,30 @@ impl View for Board {
         self.draw_board(printer);
     }
 
-
-
     fn required_size(&mut self, _constraint: cursive::Vec2) -> cursive::Vec2 {
         cursive::Vec2::new(100, 100)
     }
 
-    fn on_event(&mut self, _: Event) -> EventResult {
-        EventResult::Consumed(None)
+    fn on_event(&mut self, event: Event) -> EventResult {
+        match event {
+            Event::Char('l') => {
+                self.push(LRUD::Left);
+                EventResult::Consumed(None)
+            },
+            Event::Char('r') => {
+                self.push(LRUD::Right);
+                EventResult::Consumed(None)
+            },
+            Event::Char('u') => {
+                self.push(LRUD::Up);
+                EventResult::Consumed(None)
+            },
+            Event::Char('d') => {
+                self.push(LRUD::Down);
+                EventResult::Consumed(None)
+            },
+            _ => EventResult::Ignored,
+        }
     }
 
     fn take_focus(

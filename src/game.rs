@@ -1,7 +1,7 @@
 use crate::board::Board;
 use cursive::{
     view::Nameable,
-    views::{Dialog, LinearLayout},
+    views::Dialog,
     Cursive,
     CursiveExt,
 };
@@ -14,12 +14,10 @@ pub fn run() {
     let mut board: Board = Board::new();   
     board.insert();
     board.insert();
+    let board = board.with_name("game_2048");
 
-    let view = Dialog::around(
-        LinearLayout::vertical()
-            .child(board.with_name("game_2048")),
-    )
-    .title("GAME2048");
+    let view = Dialog::around(board)
+        .title("GAME2048");
 
     siv.add_layer(view);
 
