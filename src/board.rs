@@ -197,7 +197,9 @@ impl Board {
     }
 
     fn push_up(&mut self) {
-        println!("up");
+        self.swap_diagnol();
+        self.push_left();
+        self.swap_diagnol();
     }
 
     fn push_down(&mut self) {
@@ -210,6 +212,16 @@ impl Board {
                 let tmp = self.data[r][c];
                 self.data[r][c] = self.data[r][3 - c];
                 self.data[r][3 - c] = tmp;
+            }
+        }
+    }
+
+    fn swap_diagnol(&mut self) {
+        for r in (0..4).into_iter() {
+            for c in (r+1..4).into_iter() {
+                let tmp = self.data[r][c];
+                self.data[r][c] = self.data[c][r];
+                self.data[c][r] = tmp;
             }
         }
     }
