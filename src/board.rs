@@ -1,7 +1,8 @@
 use cursive::{
     event::{Event, EventResult},
+    theme::{ Color, ColorStyle},
     View,
-    Printer,
+    Printer, XY,
 };
 
 #[derive(Debug)]
@@ -20,18 +21,24 @@ impl Board {
 
 impl View for Board {
     fn draw(&self, printer: &Printer) {
+
+        let background_style = ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(255, 255, 0));
+
         for (i, _) in (1..5)
         .into_iter()
         .enumerate()
         {
-            printer.print((0,4*i), "o----o----o----o----o");
-            printer.print((0,4*i+1), "|    |    |    |    |");
-            printer.print((0,4*i+2), "|    |    |    |    |");
-            printer.print((0,4*i+3), "|    |    |    |    |");
+            printer.with_color(background_style, |printer| {
+                printer.print((0,4*i), "o------o------o------o------o");
+                printer.print((0,4*i+1), "|      |      |      |      |");
+                printer.print((0,4*i+2), "|      |      |      |      |");
+                printer.print((0,4*i+3), "|      |      |      |      |");
+            });
+        };
 
-        }
-
-        printer.print((0,16), "o----o----o----o----o");
+        printer.with_color(background_style, |printer| {
+            printer.print(XY::new(0,16), "o------o------o------o------o");
+        });
     }
 
     fn required_size(&mut self, _constraint: cursive::Vec2) -> cursive::Vec2 {
