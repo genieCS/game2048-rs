@@ -11,10 +11,7 @@ pub fn run() {
 
     siv.add_global_callback('q', |s| s.quit());
 
-    let mut board: Board = Board::new();   
-    board.insert();
-    board.insert();
-    let board = board.with_name("game_2048");
+    let board = Board::new().with_name("game_2048");
 
     let view = Dialog::around(board)
         .title("GAME2048");
