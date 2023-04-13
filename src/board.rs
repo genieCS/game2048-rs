@@ -24,7 +24,10 @@ impl Board {
     pub fn new() -> Self {
         let data: [[u32; 4]; 4] = [[0; 4]; 4];
         let num2color = Self::init_num2color();
-        Self { data, num2color }
+        let mut board = Self { data, num2color };
+        board.insert();
+        board.insert();
+        board
     }
 
     pub fn init_num2color() -> HashMap<u32, ColorStyle> {
@@ -112,7 +115,8 @@ impl Board {
             }
         }
     }
-    pub fn insert(&mut self) {
+
+    fn insert(&mut self) {
         let mut rng = rand::thread_rng();
         let mut r = rng.gen_range(0..4);
         let mut c = rng.gen_range(0..4);
@@ -125,7 +129,7 @@ impl Board {
         self.data[r][c] = val;
     }
 
-    pub fn is_full(&self) -> bool {
+    fn is_full(&self) -> bool {
         for i in (0..4).into_iter() {
             for j in (0..4).into_iter() {
                 if self.data[i][j] == 0 {
@@ -151,6 +155,11 @@ impl Board {
     }
 
     fn push_left(&mut self) {
+        self.merge_left();
+        self._push_left();
+    }
+
+    fn merge_left(&mut self) {
         for r in (0..4).into_iter() {
             let mut i = 0;
             while i < 3 {
@@ -173,7 +182,11 @@ impl Board {
                     i = j;
                 }
             }
+        }
+    }
 
+    fn _push_left(&mut self) {
+        for r in (0..4).into_iter() {
             let mut i = 0;
             while i < 4 {
                 if self.data[r][i] != 0 {
@@ -189,7 +202,7 @@ impl Board {
                 }
                 self.data[r][i] = self.data[r][j];
                 self.data[r][j] = 0;
-                i = j + 1;
+                i = j;
             }
         }
     }
