@@ -1,7 +1,8 @@
 use cursive::{
-    event::{Event, EventResult},
+    event::{Event, EventResult, Callback},
     theme::{Color, ColorStyle},
     Printer, View, XY,
+    views::TextView,
 };
 use rand::Rng;
 use std::collections::HashMap;
@@ -18,13 +19,14 @@ enum LRUD {
 pub struct Board {
     pub data: [[u32; 4]; 4],
     pub num2color: HashMap<u32, ColorStyle>,
+    score: u32,
 }
 
 impl Board {
     pub fn new() -> Self {
         let data: [[u32; 4]; 4] = [[0; 4]; 4];
         let num2color = Self::init_num2color();
-        let mut board = Self { data, num2color };
+        let mut board = Self { data, num2color, score: 0 };
         board.insert();
         board.insert();
         board
@@ -140,23 +142,32 @@ impl Board {
         true
     }
 
-    fn push(&mut self, lrud: LRUD) {
-        match lrud {
+    fn push(&mut self, lrud: LRUD) -> EventResult {
+        self.score += match lrud {
             LRUD::Left => self.push_left(),
             LRUD::Right=> self.push_right(),
             LRUD::Up => self.push_up(),
             LRUD::Down => self.push_down(),
-        }
+        };
         if self.is_full() {
             println!("Game Over!");
-            return
+        } else {
+            self.insert();
         }
-        self.insert();
+        self.event_result(self.score)
     }
 
-    fn push_left(&mut self) {
+    fn event_result(&self, score: u32) -> EventResult {
+        EventResult::Consumed(Some(Callback::from_fn(move |s| {
+            s.call_on_name("score", |view: &mut TextView| {
+                view.set_content(score.to_string());
+            });
+        })))
+    }
+
+    fn push_left(&mut self) -> u32 {
         self.merge_left();
-        self._push_left();
+        self._push_left()
     }
 
     fn merge_left(&mut self) {
@@ -185,7 +196,7 @@ impl Board {
         }
     }
 
-    fn _push_left(&mut self) {
+    fn _push_left(&mut self) -> u32 {
         for r in (0..4).into_iter() {
             let mut i = 0;
             while i < 4 {
@@ -205,24 +216,28 @@ impl Board {
                 i = j;
             }
         }
+        4
     }
 
-    fn push_right(&mut self) {
+    fn push_right(&mut self) -> u32 {
         self.swap_lr();
-        self.push_left();
+        let score = self.push_left();
         self.swap_lr();
+        score
     }
 
-    fn push_up(&mut self) {
+    fn push_up(&mut self) -> u32 {
         self.swap_diagnol();
-        self.push_left();
+        let score = self.push_left();
         self.swap_diagnol();
+        score
     }
 
-    fn push_down(&mut self) {
+    fn push_down(&mut self) -> u32 {
         self.swap_ud();
-        self.push_up();
+        let score = self.push_up();
         self.swap_ud();
+        score
     }
 
     fn swap_lr(&mut self) {
@@ -268,22 +283,10 @@ impl View for Board {
 
     fn on_event(&mut self, event: Event) -> EventResult {
         match event {
-            Event::Char('l') => {
-                self.push(LRUD::Left);
-                EventResult::Consumed(None)
-            },
-            Event::Char('r') => {
-                self.push(LRUD::Right);
-                EventResult::Consumed(None)
-            },
-            Event::Char('u') => {
-                self.push(LRUD::Up);
-                EventResult::Consumed(None)
-            },
-            Event::Char('d') => {
-                self.push(LRUD::Down);
-                EventResult::Consumed(None)
-            },
+            Event::Char('l') => self.push(LRUD::Left),
+            Event::Char('r') => self.push(LRUD::Right),
+            Event::Char('u') => self.push(LRUD::Up),
+            Event::Char('d') => self.push(LRUD::Down),
             _ => EventResult::Ignored,
         }
     }
