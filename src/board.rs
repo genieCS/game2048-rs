@@ -166,11 +166,13 @@ impl Board {
     }
 
     fn push_left(&mut self) -> u32 {
-        self.merge_left();
-        self._push_left()
+        let score = self.merge_left();
+        self._push_left();
+        score
     }
 
-    fn merge_left(&mut self) {
+    fn merge_left(&mut self) -> u32 {
+        let mut score = 0;
         for r in (0..4).into_iter() {
             let mut i = 0;
             while i < 3 {
@@ -187,6 +189,7 @@ impl Board {
                 } 
                 if self.data[r][i] == self.data[r][j] {
                     self.data[r][i] *= 2;
+                    score += self.data[r][i];
                     self.data[r][j] = 0;
                     i = j + 1;
                 } else {
@@ -194,9 +197,10 @@ impl Board {
                 }
             }
         }
+        score
     }
 
-    fn _push_left(&mut self) -> u32 {
+    fn _push_left(&mut self) {
         for r in (0..4).into_iter() {
             let mut i = 0;
             while i < 4 {
@@ -216,7 +220,6 @@ impl Board {
                 i = j;
             }
         }
-        4
     }
 
     fn push_right(&mut self) -> u32 {
