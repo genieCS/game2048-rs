@@ -124,16 +124,19 @@ impl Board {
     }
 
     fn push(&mut self, lrud: LRUD) -> EventResult {
-        self.score += match lrud {
+        let score = match lrud {
             LRUD::Left => self.push_left(),
             LRUD::Right => self.push_right(),
             LRUD::Up => self.push_up(),
             LRUD::Down => self.push_down(),
         };
+        self.score += score;
         if self.is_full() {
             return self.gameover();
         } 
-        self.insert();
+        if score != 0 {
+            self.insert();
+        }
         self.event_result(self.score, lrud)
     }
 
