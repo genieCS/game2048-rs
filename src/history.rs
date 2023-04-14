@@ -23,7 +23,7 @@ impl History {
     }
 
     pub fn clear(&mut self) {
-        while self.data.len() > 0 {
+        while !self.data.is_empty() {
             self.data.pop_back();
         }
     }
