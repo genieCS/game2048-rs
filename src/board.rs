@@ -7,12 +7,14 @@ use cursive::{
     Printer, View, XY,
 };
 use rand::Rng;
+use maplit::hashmap;
 use std::collections::HashMap;
 
 #[derive(Debug)]
 pub struct Board {
     pub data: [[u32; 4]; 4],
-    pub num2color: HashMap<u32, ColorStyle>,
+    current_theme: HashMap<u32, ColorStyle>,
+    swap_theme: HashMap<u32, ColorStyle>,
     score: u32,
 }
 
@@ -25,10 +27,12 @@ impl Default for Board {
 impl Board {
     pub fn new() -> Self {
         let data: [[u32; 4]; 4] = [[0; 4]; 4];
-        let num2color = Self::init_num2color();
+        let current_theme = Self::traditional_colors();
+        let swap_theme = Self::various_colors();
         let mut board = Self {
             data,
-            num2color,
+            current_theme,
+            swap_theme,
             score: 0,
         };
         board.insert();
@@ -36,23 +40,42 @@ impl Board {
         board
     }
 
-    pub fn init_num2color() -> HashMap<u32, ColorStyle> {
-        let mut map = HashMap::new();
+    pub fn swap_theme(&mut self) {
+        std::mem::swap(&mut self.current_theme, &mut self.swap_theme);
+    }
 
-        map.insert(0, ColorStyle::new(Color::Rgb(187, 173, 160), Color::Rgb(187, 173, 160))); // Default color for empty cells
-        map.insert(2, ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(248, 231, 28))); // Light yellow
-        map.insert(4, ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(242, 202, 24))); // Beige
-        map.insert(8, ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(245, 159, 27))); // Light orange
-        map.insert(16, ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(246, 122, 29))); // Orange
-        map.insert(32, ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(242, 83, 34))); // Light red
-        map.insert(64, ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(210, 30, 40))); // Red
-        map.insert(128, ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(241, 45, 98))); // Light pink
-        map.insert(256, ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(234, 33, 126))); // Pink
-        map.insert(512, ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(191, 33, 128))); // Light purple
-        map.insert(1024, ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(149, 33, 135))); // Purple
-        map.insert(2048, ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(98, 33, 138))); // Bright purple
-    
-        map
+    fn traditional_colors() -> HashMap<u32, ColorStyle> {
+        hashmap!{
+            0 => ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(187, 173, 160)), // Default color for empty cells
+            2 => ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(255, 255, 0)), // Light yellow
+            4 => ColorStyle::new(Color::Rgb(255, 255, 255), Color::Rgb(192, 192, 192)), // Gray
+            8 => ColorStyle::new(Color::Rgb(255, 255, 255), Color::Rgb(0, 255, 0)), // Green
+            16 => ColorStyle::new(Color::Rgb(255, 255, 255), Color::Rgb(255, 0, 0)), // Red
+            32 => ColorStyle::new(Color::Rgb(255, 255, 255), Color::Rgb(0, 0, 255)), // Blue
+            64 => ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(255, 255, 255)), // White
+            128 => ColorStyle::new(Color::Rgb(255, 255, 255), Color::Rgb(0, 255, 255)), // Cyan
+            256 => ColorStyle::new(Color::Rgb(255, 255, 255), Color::Rgb(255, 0, 255)), // Magenta
+            512 => ColorStyle::new(Color::Rgb(255, 255, 255), Color::Rgb(128, 128, 128)), // Dark gray
+            1024 => ColorStyle::new(Color::Rgb(255, 255, 255), Color::Rgb(192, 192, 192)), // Light gray
+            2048 => ColorStyle::new(Color::Rgb(255, 255, 255), Color::Rgb(165, 42, 42)), // Brown
+        }
+    }
+
+    fn various_colors() -> HashMap<u32, ColorStyle> {
+        hashmap!{
+            0 => ColorStyle::new(Color::Rgb(187, 173, 160), Color::Rgb(187, 173, 160)), // Default color for empty cells
+            2 => ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(248, 231, 28)), // Light yellow
+            4 => ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(242, 202, 24)), // Beige
+            8 => ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(245, 159, 27)), // Light orange
+            16 => ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(246, 122, 29)), // Orange
+            32 => ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(242, 83, 34)), // Light red
+            64 => ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(210, 30, 40)), // Red
+            128 => ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(241, 45, 98)), // Light pink
+            256 => ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(234, 33, 126)), // Pink
+            512 => ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(191, 33, 128)), // Light purple
+            1024 => ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(149, 33, 135)), // Purple
+            2048 => ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(98, 33, 138)), // Bright purple
+        }
     }
 
     fn draw_background(&self, printer: &Printer) {
@@ -76,7 +99,7 @@ impl Board {
         for i in 0..4 {
             for j in 0..4 {
                 let num = self.data[i][j];
-                let color_style = self.num2color.get(&num).unwrap();
+                let color_style = self.current_theme.get(&num).unwrap();
                 let num_str = &num.to_string();
                 let num = if num == 0 { "" } else { num_str };
                 printer.with_color(*color_style, |printer| {

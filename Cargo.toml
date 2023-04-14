@@ -7,4 +7,5 @@ repository = "https://github.com/genieCS/game2048-rs"
 
 [dependencies]
 cursive = "0.20"
+maplit = "1.0"
 rand = "0.8.4"

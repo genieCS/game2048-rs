@@ -23,7 +23,7 @@ impl History {
     }
 
     pub fn clear(&mut self) {
-        while self.data.len() > 0 {
+        while !self.data.is_empty() {
             self.data.pop_back();
         }
     }
@@ -38,7 +38,7 @@ impl Default for History {
 impl View for History {
     fn draw(&self, printer: &Printer) {
         for (i, v) in self.data.iter().enumerate() {
-        let background_style = ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(100, 100, 100));
+        let background_style = ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(255, 255, 255));
         printer.with_color(background_style, |printer| {
             printer.print((0, 12-i), &format!(" {:>5} ",&v));
         });
