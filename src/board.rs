@@ -124,7 +124,7 @@ impl Board {
     }
 
     fn push(&mut self, lrud: LRUD) -> EventResult {
-        let score = match lrud {
+        let (score, moved) = match lrud {
             LRUD::Left => self.push_left(),
             LRUD::Right => self.push_right(),
             LRUD::Up => self.push_up(),
@@ -134,7 +134,7 @@ impl Board {
         if self.is_full() {
             return self.gameover();
         } 
-        if score != 0 {
+        if moved {
             self.insert();
         }
         self.event_result(self.score, lrud)
@@ -157,10 +157,10 @@ impl Board {
         })))
     }
 
-    fn push_left(&mut self) -> u32 {
+    fn push_left(&mut self) -> (u32, bool) {
         let score = self.merge_left();
-        self._push_left();
-        score
+        let moved = self._push_left();
+        (score, score != 0 || moved)
     }
 
     fn merge_left(&mut self) -> u32 {
@@ -192,7 +192,8 @@ impl Board {
         score
     }
 
-    fn _push_left(&mut self) {
+    fn _push_left(&mut self) -> bool {
+        let mut moved = false;
         for r in 0..4 {
             let mut i = 0;
             while i < 4 {
@@ -207,32 +208,34 @@ impl Board {
                 if j == 4 {
                     break;
                 }
+                moved = true;
                 self.data[r][i] = self.data[r][j];
                 self.data[r][j] = 0;
                 i = j;
             }
         }
+        moved
     }
 
-    fn push_right(&mut self) -> u32 {
+    fn push_right(&mut self) -> (u32, bool) {
         self.swap_lr();
-        let score = self.push_left();
+        let result = self.push_left();
         self.swap_lr();
-        score
+        result
     }
 
-    fn push_up(&mut self) -> u32 {
+    fn push_up(&mut self) -> (u32, bool) {
         self.swap_diagnol();
-        let score = self.push_left();
+        let result = self.push_left();
         self.swap_diagnol();
-        score
+        result
     }
 
-    fn push_down(&mut self) -> u32 {
+    fn push_down(&mut self) -> (u32, bool) {
         self.swap_ud();
-        let score = self.push_up();
+        let result = self.push_up();
         self.swap_ud();
-        score
+        result
     }
 
     fn swap_lr(&mut self) {
