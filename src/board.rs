@@ -294,7 +294,7 @@ impl View for Board {
     }
 
     fn required_size(&mut self, _constraint: cursive::Vec2) -> cursive::Vec2 {
-        cursive::Vec2::new(100, 100)
+        cursive::Vec2::new(30, 30)
     }
 
     fn on_event(&mut self, event: Event) -> EventResult {

@@ -1,4 +1,5 @@
 use crate::board::Board;
+use crate::history::History;
 use cursive::{
     view::{Nameable, Resizable, Selector},
     views::{Button, Dialog, DummyView, LinearLayout, TextView},
@@ -19,11 +20,18 @@ pub fn run() {
         .child(Button::new("New Game", new_game))
         .fixed_size(XY::new(10, 5));
 
-        siv.add_global_callback('n', new_game);
+    siv.add_global_callback('n', new_game);
+
+    let history = History::new().with_name("history");
+    let history = LinearLayout::vertical()
+    .child(TextView::new("HISTORY"))
+    .child(history);
 
     let view = Dialog::around(
         LinearLayout::horizontal()
             .child(board)
+            .child(DummyView)
+            .child(history)
             .child(DummyView)
             .child(score_view),
     )
