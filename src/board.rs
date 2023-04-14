@@ -9,8 +9,6 @@ use cursive::{
 use rand::Rng;
 use std::collections::HashMap;
 
-
-
 #[derive(Debug)]
 pub struct Board {
     pub data: [[u32; 4]; 4],
@@ -40,54 +38,20 @@ impl Board {
 
     pub fn init_num2color() -> HashMap<u32, ColorStyle> {
         let mut map = HashMap::new();
-        map.insert(
-            0,
-            ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(255, 0, 0)),
-        ); // Red
-        map.insert(
-            2,
-            ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(255, 165, 0)),
-        ); // Orange
-        map.insert(
-            4,
-            ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(255, 255, 0)),
-        ); // Yellow
-        map.insert(
-            8,
-            ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(0, 255, 0)),
-        ); // Green
-        map.insert(
-            16,
-            ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(0, 255, 255)),
-        ); // Cyan
-        map.insert(
-            32,
-            ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(0, 0, 255)),
-        ); // Blue
-        map.insert(
-            64,
-            ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(128, 0, 128)),
-        ); // Purple
-        map.insert(
-            128,
-            ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(255, 0, 255)),
-        ); // Magenta
-        map.insert(
-            256,
-            ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(128, 128, 128)),
-        ); // Gray
-        map.insert(
-            512,
-            ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(255, 255, 255)),
-        ); // White
-        map.insert(
-            1024,
-            ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(255, 192, 203)),
-        ); // Pink
-        map.insert(
-            2048,
-            ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(255, 0, 128)),
-        ); // Rose
+
+        map.insert(0, ColorStyle::new(Color::Rgb(187, 173, 160), Color::Rgb(187, 173, 160))); // Default color for empty cells
+        map.insert(2, ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(248, 231, 28))); // Light yellow
+        map.insert(4, ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(242, 202, 24))); // Beige
+        map.insert(8, ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(245, 159, 27))); // Light orange
+        map.insert(16, ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(246, 122, 29))); // Orange
+        map.insert(32, ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(242, 83, 34))); // Light red
+        map.insert(64, ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(210, 30, 40))); // Red
+        map.insert(128, ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(241, 45, 98))); // Light pink
+        map.insert(256, ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(234, 33, 126))); // Pink
+        map.insert(512, ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(191, 33, 128))); // Light purple
+        map.insert(1024, ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(149, 33, 135))); // Purple
+        map.insert(2048, ColorStyle::new(Color::Rgb(255, 192, 203), Color::Rgb(98, 33, 138))); // Bright purple
+    
         map
     }
 
