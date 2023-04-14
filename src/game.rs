@@ -16,17 +16,10 @@ pub fn run() {
         .child(TextView::new("SCORE"))
         .child(TextView::new("0").with_name("score"))
         .child(DummyView)
-        .child(Button::new("New Game", |s| {
-            s.call_on_name("score", |view: &mut TextView| {
-                view.set_content("0");
-            });
-            s.call_on_name("game_2048", |board: &mut Board| {
-                board.restart();
-            });
-            let game = "game_2048";
-            s.focus(&Selector::Name(game)).unwrap();
-        }))
+        .child(Button::new("New Game", |s| new_game(s)))
         .fixed_size(XY::new(10, 5));
+
+        siv.add_global_callback('n', |s| new_game(s));
 
     let view = Dialog::around(
         LinearLayout::horizontal()
@@ -39,4 +32,15 @@ pub fn run() {
     siv.add_layer(view);
 
     siv.run();
+}
+
+fn new_game(s: &mut Cursive) {
+    s.call_on_name("score", |view: &mut TextView| {
+        view.set_content("0");
+    });
+    s.call_on_name("game_2048", |board: &mut Board| {
+        board.restart();
+    });
+    let game = "game_2048";
+    s.focus(&Selector::Name(game)).unwrap();   
 }
