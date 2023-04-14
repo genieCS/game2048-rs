@@ -163,7 +163,7 @@ impl Board {
                 return self.gameover();
             }
         }
-        self.event_result(self.score, lrud)
+        self.event_result(self.score, lrud, moved)
     }
 
     fn can_merge(&self) -> bool {
@@ -186,14 +186,16 @@ impl Board {
         })))
     }
 
-    fn event_result(&self, score: u32, lrud: LRUD) -> EventResult {
+    fn event_result(&self, score: u32, lrud: LRUD, moved: bool) -> EventResult {
         EventResult::Consumed(Some(Callback::from_fn(move |s| {
             s.call_on_name("score", |view: &mut TextView| {
                 view.set_content(score.to_string());
             });
-            s.call_on_name("history", |history: &mut History| {
-                history.update(lrud)
-            });
+            if moved {
+                s.call_on_name("history", |history: &mut History| {
+                    history.update(lrud)
+                });
+            }
         })))
     }
 
