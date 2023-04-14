@@ -3,22 +3,30 @@ use cursive::{
     Printer, View,
 };
 use std::collections::VecDeque;
+use crate::lrud::{LRUD};
 
 pub struct History {
-    data: VecDeque<String>,
+    data: VecDeque<LRUD>,
 }
+
 
 impl History {
     pub fn new() -> Self {
-        let data = vec![
-            String::from("L"),
-            String::from("R"),
-            String::from("U"),
-            String::from("D")
-            ];
-        let data = VecDeque::from(data);
-        Self { data }
+        Self { data: VecDeque::new() }
     }
+
+    pub fn update(&mut self, lrud: LRUD) {
+        if self.data.len() == 12 {
+            self.data.pop_front();
+        }
+        self.data.push_back(lrud);
+    }
+}
+
+impl Default for History {
+        fn default() -> Self {
+            Self::new()
+        }
 }
 
 impl View for History {
@@ -26,12 +34,12 @@ impl View for History {
         for (i, v) in self.data.iter().enumerate() {
         let background_style = ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(100, 100, 100));
         printer.with_color(background_style, |printer| {
-            printer.print((0, i+1), &format!("   {:>1}   ",&v));
+            printer.print((0, 12-i), &format!(" {:>5} ",&v));
         });
         }
     }
 
     fn required_size(&mut self, _constraint: cursive::Vec2) -> cursive::Vec2 {
-        cursive::Vec2::new(10,10)
+        cursive::Vec2::new(13,13)
     }
 }
