@@ -1,9 +1,9 @@
 use crate::board::Board;
 use crate::history::History;
 use cursive::{
-    view::{Nameable, Resizable, Selector},
+    view::{Nameable, Selector},
     views::{Button, Dialog, DummyView, LinearLayout, TextView},
-    Cursive, CursiveExt, XY,
+    Cursive, CursiveExt,
 };
 
 pub fn run() {
