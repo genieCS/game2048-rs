@@ -40,7 +40,7 @@ impl View for History {
         for (i, v) in self.data.iter().enumerate() {
         let background_style = ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(100, 100, 100));
         printer.with_color(background_style, |printer| {
-            printer.print((0, 12-i), &format!(" {:>5} ",&v));
+            printer.print((0, self.data.len() - i), &format!(" {:>5} ",&v));
         });
         }
     }
