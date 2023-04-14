@@ -136,8 +136,25 @@ impl Board {
         } 
         if moved {
             self.insert();
+            if self.is_full() && !self.can_merge() {
+                return self.gameover();
+            }
         }
         self.event_result(self.score, lrud)
+    }
+
+    fn can_merge(&self) -> bool {
+        for i in 0..3 {
+            for j in 0..3 {
+                if self.data[i][j] == self.data[i + 1][j] {
+                    return true;
+                }
+                if self.data[i][j] == self.data[i][j + 1] {
+                    return true;
+                }
+            }
+        }
+        false
     }
 
     fn gameover(&self) -> EventResult {
