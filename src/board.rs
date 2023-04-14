@@ -1,3 +1,5 @@
+use crate::history::History;
+use crate::lrud::LRUD;
 use cursive::{
     event::{Callback, Event, EventResult, Key},
     theme::{Color, ColorStyle},
@@ -7,19 +9,19 @@ use cursive::{
 use rand::Rng;
 use std::collections::HashMap;
 
-#[derive(Debug)]
-enum LRUD {
-    Left,
-    Right,
-    Up,
-    Down,
-}
+
 
 #[derive(Debug)]
 pub struct Board {
     pub data: [[u32; 4]; 4],
     pub num2color: HashMap<u32, ColorStyle>,
     score: u32,
+}
+
+impl Default for Board {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl Board {
@@ -169,13 +171,16 @@ impl Board {
         } else {
             self.insert();
         }
-        self.event_result(self.score)
+        self.event_result(self.score, lrud)
     }
 
-    fn event_result(&self, score: u32) -> EventResult {
+    fn event_result(&self, score: u32, lrud: LRUD) -> EventResult {
         EventResult::Consumed(Some(Callback::from_fn(move |s| {
             s.call_on_name("score", |view: &mut TextView| {
                 view.set_content(score.to_string());
+            });
+            s.call_on_name("history", |history: &mut History| {
+                history.update(lrud)
             });
         })))
     }
