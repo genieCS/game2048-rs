@@ -20,7 +20,8 @@ pub fn run() {
     .child(TextView::new("←, l: left"))
     .child(TextView::new("→, r: right"))
     .child(TextView::new("n: new game"))
-    .child(TextView::new("q: quit"));
+    .child(TextView::new("q: quit"))
+    .child(TextView::new("t: swap theme"));
 
     let manual_view = LinearLayout::vertical()
         .child(TextView::new("SCORE"))
@@ -31,6 +32,11 @@ pub fn run() {
         .child(shortcut);
 
     siv.add_global_callback('n', new_game);
+    siv.add_global_callback('t', |s| {
+        s.call_on_name("game_2048", |board: &mut Board| {
+            board.swap_theme();
+        });
+    });
 
     let history = History::new().with_name("history");
     let history = LinearLayout::vertical()
