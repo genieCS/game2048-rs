@@ -104,7 +104,7 @@ impl Board {
                 let num = if num == 0 { "" } else { num_str };
                 printer.with_color(*color_style, |printer| {
                     printer.print((7 * j + 1, 4 * i + 1), "      ");
-                    printer.print((7 * j + 1, 4 * i + 2), &format!(" {:>4} ", num));
+                    printer.print((7 * j + 1, 4 * i + 2), &format!(" {:^4} ", num));
                     printer.print((7 * j + 1, 4 * i + 3), "      ");
                 });
             }
