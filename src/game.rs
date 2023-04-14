@@ -16,10 +16,10 @@ pub fn run() {
         .child(TextView::new("SCORE"))
         .child(TextView::new("0").with_name("score"))
         .child(DummyView)
-        .child(Button::new("New Game", |s| new_game(s)))
+        .child(Button::new("New Game", new_game))
         .fixed_size(XY::new(10, 5));
 
-        siv.add_global_callback('n', |s| new_game(s));
+        siv.add_global_callback('n', new_game);
 
     let view = Dialog::around(
         LinearLayout::horizontal()

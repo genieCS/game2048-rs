@@ -1,5 +1,5 @@
 use cursive::{
-    event::{Callback, Event, EventResult},
+    event::{Callback, Event, EventResult, Key},
     theme::{Color, ColorStyle},
     views::TextView,
     Printer, View, XY,
@@ -299,10 +299,10 @@ impl View for Board {
 
     fn on_event(&mut self, event: Event) -> EventResult {
         match event {
-            Event::Char('l') => self.push(LRUD::Left),
-            Event::Char('r') => self.push(LRUD::Right),
-            Event::Char('u') => self.push(LRUD::Up),
-            Event::Char('d') => self.push(LRUD::Down),
+            Event::Char('l') | Event::Key(Key::Left) => self.push(LRUD::Left),
+            Event::Char('r') | Event::Key(Key::Right) => self.push(LRUD::Right),
+            Event::Char('u') | Event::Key(Key::Up) => self.push(LRUD::Up),
+            Event::Char('d') | Event::Key(Key::Down) => self.push(LRUD::Down),
             _ => EventResult::Ignored,
         }
     }
