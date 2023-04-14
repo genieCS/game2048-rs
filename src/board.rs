@@ -118,6 +118,17 @@ impl Board {
         }
     }
 
+    pub fn restart(&mut self) {
+        for i in (0..4).into_iter() {
+            for j in (0..4).into_iter() {
+                self.data[i][j] = 0;
+            }
+        }
+        self.score = 0;
+        self.insert();
+        self.insert();
+    }
+
     fn insert(&mut self) {
         let mut rng = rand::thread_rng();
         let mut r = rng.gen_range(0..4);

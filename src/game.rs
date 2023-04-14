@@ -1,9 +1,10 @@
 use crate::board::Board;
 use cursive::{
-    view::{Nameable, Resizable},
-    views::{Dialog, DummyView, LinearLayout, TextView},
+    view::{Nameable, Resizable, Selector},
+    views::{Dialog, DummyView, LinearLayout, TextView, Button},
     Cursive,
     CursiveExt,
+    XY,
 };
 
 pub fn run() {
@@ -15,9 +16,19 @@ pub fn run() {
 
     let score_view = LinearLayout::vertical()
     .child(TextView::new("SCORE"))
-    .child(DummyView)
     .child(TextView::new("0").with_name("score"))
-    .fixed_size((10, 5));
+    .child(DummyView)
+    .child(Button::new("New Game", |s| {
+        s.call_on_name("score", |view: &mut TextView| {
+            view.set_content("0");
+        });
+        s.call_on_name("game_2048", |board: &mut Board| {
+            board.restart();
+        });
+        let game = "game_2048";
+        s.focus(&Selector::Name(game));
+    }))
+    .fixed_size(XY::new(10, 5));
 
     let view = Dialog::around(
         LinearLayout::horizontal()
