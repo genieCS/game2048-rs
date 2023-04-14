@@ -49,6 +49,9 @@ fn new_game(s: &mut Cursive) {
     s.call_on_name("game_2048", |board: &mut Board| {
         board.restart();
     });
+    s.call_on_name("history", |history: &mut History| {
+        history.clear();
+    });
     let game = "game_2048";
     s.focus(&Selector::Name(game)).unwrap();   
 }

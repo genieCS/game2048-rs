@@ -3,7 +3,7 @@ use crate::lrud::LRUD;
 use cursive::{
     event::{Callback, Event, EventResult, Key},
     theme::{Color, ColorStyle},
-    views::TextView,
+    views::{ Dialog, TextView},
     Printer, View, XY,
 };
 use rand::Rng;
@@ -167,11 +167,16 @@ impl Board {
             LRUD::Down => self.push_down(),
         };
         if self.is_full() {
-            println!("Game Over!");
-        } else {
-            self.insert();
-        }
+            return self.gameover();
+        } 
+        self.insert();
         self.event_result(self.score, lrud)
+    }
+
+    fn gameover(&self) -> EventResult {
+        EventResult::Consumed(Some(Callback::from_fn(move |s| {
+            s.add_layer(Dialog::info("Game Over!"));
+        })))
     }
 
     fn event_result(&self, score: u32, lrud: LRUD) -> EventResult {

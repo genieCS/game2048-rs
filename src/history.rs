@@ -21,6 +21,12 @@ impl History {
         }
         self.data.push_back(lrud);
     }
+
+    pub fn clear(&mut self) {
+        while self.data.len() > 0 {
+            self.data.pop_back();
+        }
+    }
 }
 
 impl Default for History {
