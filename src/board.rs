@@ -1,8 +1,8 @@
 use cursive::{
-    event::{Event, EventResult, Callback},
+    event::{Callback, Event, EventResult},
     theme::{Color, ColorStyle},
-    Printer, View, XY,
     views::TextView,
+    Printer, View, XY,
 };
 use rand::Rng;
 use std::collections::HashMap;
@@ -26,7 +26,11 @@ impl Board {
     pub fn new() -> Self {
         let data: [[u32; 4]; 4] = [[0; 4]; 4];
         let num2color = Self::init_num2color();
-        let mut board = Self { data, num2color, score: 0 };
+        let mut board = Self {
+            data,
+            num2color,
+            score: 0,
+        };
         board.insert();
         board.insert();
         board
@@ -87,10 +91,10 @@ impl Board {
 
     fn draw_background(&self, printer: &Printer) {
         let background_style = ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(188, 173, 159));
-        for i in (0..4).into_iter() {
+        for i in 0..4 {
             printer.with_color(background_style, |printer| {
                 printer.print((0, 4 * i), "o------o------o------o------o");
-                for j in (0..5).into_iter() {
+                for j in 0..5 {
                     printer.print((7 * j, 4 * i + 1), "|");
                     printer.print((7 * j, 4 * i + 2), "|");
                     printer.print((7 * j, 4 * i + 3), "|");
@@ -103,8 +107,8 @@ impl Board {
     }
 
     fn draw_board(&self, printer: &Printer) {
-        for i in (0..4).into_iter() {
-            for j in (0..4).into_iter() {
+        for i in 0..4 {
+            for j in 0..4 {
                 let num = self.data[i][j];
                 let color_style = self.num2color.get(&num).unwrap();
                 let num_str = &num.to_string();
@@ -119,8 +123,8 @@ impl Board {
     }
 
     pub fn restart(&mut self) {
-        for i in (0..4).into_iter() {
-            for j in (0..4).into_iter() {
+        for i in 0..4 {
+            for j in 0..4 {
                 self.data[i][j] = 0;
             }
         }
@@ -143,8 +147,8 @@ impl Board {
     }
 
     fn is_full(&self) -> bool {
-        for i in (0..4).into_iter() {
-            for j in (0..4).into_iter() {
+        for i in 0..4 {
+            for j in 0..4 {
                 if self.data[i][j] == 0 {
                     return false;
                 }
@@ -156,7 +160,7 @@ impl Board {
     fn push(&mut self, lrud: LRUD) -> EventResult {
         self.score += match lrud {
             LRUD::Left => self.push_left(),
-            LRUD::Right=> self.push_right(),
+            LRUD::Right => self.push_right(),
             LRUD::Up => self.push_up(),
             LRUD::Down => self.push_down(),
         };
@@ -184,7 +188,7 @@ impl Board {
 
     fn merge_left(&mut self) -> u32 {
         let mut score = 0;
-        for r in (0..4).into_iter() {
+        for r in 0..4 {
             let mut i = 0;
             while i < 3 {
                 if self.data[r][i] == 0 {
@@ -197,7 +201,7 @@ impl Board {
                 }
                 if j == 4 {
                     break;
-                } 
+                }
                 if self.data[r][i] == self.data[r][j] {
                     self.data[r][i] *= 2;
                     score += self.data[r][i];
@@ -212,7 +216,7 @@ impl Board {
     }
 
     fn _push_left(&mut self) {
-        for r in (0..4).into_iter() {
+        for r in 0..4 {
             let mut i = 0;
             while i < 4 {
                 if self.data[r][i] != 0 {
@@ -255,18 +259,16 @@ impl Board {
     }
 
     fn swap_lr(&mut self) {
-        for r in (0..4).into_iter() {
-            for c in (0..2).into_iter() {
-                let tmp = self.data[r][c];
-                self.data[r][c] = self.data[r][3 - c];
-                self.data[r][3 - c] = tmp;
+        for r in 0..4 {
+            for c in 0..2 {
+                self.data[r].swap(c, 3-c);
             }
         }
     }
 
     fn swap_diagnol(&mut self) {
-        for r in (0..4).into_iter() {
-            for c in (r+1..4).into_iter() {
+        for r in 0..4 {
+            for c in (r + 1)..4 {
                 let tmp = self.data[r][c];
                 self.data[r][c] = self.data[c][r];
                 self.data[c][r] = tmp;
@@ -275,8 +277,8 @@ impl Board {
     }
 
     fn swap_ud(&mut self) {
-        for r in (0..2).into_iter() {
-            for c in (0..4).into_iter() {
+        for r in 0..2 {
+            for c in 0..4 {
                 let tmp = self.data[r][c];
                 self.data[r][c] = self.data[3 - r][c];
                 self.data[3 - r][c] = tmp;
