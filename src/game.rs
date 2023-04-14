@@ -13,12 +13,22 @@ pub fn run() {
 
     let board = Board::new().with_name("game_2048");
 
-    let score_view = LinearLayout::vertical()
+    let shortcut = LinearLayout::vertical()
+    .child(TextView::new("SHORTCUT"))
+    .child(TextView::new("↑, u: up"))
+    .child(TextView::new("↓, d: down"))
+    .child(TextView::new("←, l: left"))
+    .child(TextView::new("→, r: right"))
+    .child(TextView::new("n: new game"))
+    .child(TextView::new("q: quit"));
+
+    let manual_view = LinearLayout::vertical()
         .child(TextView::new("SCORE"))
         .child(TextView::new("0").with_name("score"))
         .child(DummyView)
         .child(Button::new("New Game", new_game))
-        .fixed_size(XY::new(10, 5));
+        .child(DummyView)
+        .child(shortcut);
 
     siv.add_global_callback('n', new_game);
 
@@ -33,7 +43,7 @@ pub fn run() {
             .child(DummyView)
             .child(history)
             .child(DummyView)
-            .child(score_view),
+            .child(manual_view),
     )
     .title("GAME2048");
 
