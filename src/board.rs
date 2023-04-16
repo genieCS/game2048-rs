@@ -82,16 +82,19 @@ impl Board {
         let background_style = ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(188, 173, 159));
         for i in 0..4 {
             printer.with_color(background_style, |printer| {
-                printer.print((0, 4 * i), "o------o------o------o------o");
+                printer.print((0, 6 * i), "o---------o---------o---------o---------o");
                 for j in 0..5 {
-                    printer.print((7 * j, 4 * i + 1), "|");
-                    printer.print((7 * j, 4 * i + 2), "|");
-                    printer.print((7 * j, 4 * i + 3), "|");
+                    printer.print((10 * j, 6 * i + 1), "|");
+                    printer.print((10 * j, 6 * i + 2), "|");
+                    printer.print((10 * j, 6 * i + 3), "|");
+                    printer.print((10 * j, 6 * i + 4), "|");
+                    printer.print((10 * j, 6 * i + 5), "|");
+
                 }
             });
         }
         printer.with_color(background_style, |printer| {
-            printer.print(XY::new(0, 16), "o------o------o------o------o");
+            printer.print(XY::new(0, 24), "o---------o---------o---------o---------o");
         });
     }
 
@@ -103,9 +106,11 @@ impl Board {
                 let num_str = &num.to_string();
                 let num = if num == 0 { "" } else { num_str };
                 printer.with_color(*color_style, |printer| {
-                    printer.print((7 * j + 1, 4 * i + 1), "      ");
-                    printer.print((7 * j + 1, 4 * i + 2), &format!(" {:^4} ", num));
-                    printer.print((7 * j + 1, 4 * i + 3), "      ");
+                    printer.print((10 * j + 1, 6 * i + 1), "         ");
+                    printer.print((10 * j + 1, 6 * i + 2), "         ");
+                    printer.print((10 * j + 1, 6 * i + 3), &format!(" {:^7} ", num));
+                    printer.print((10 * j + 1, 6 * i + 4), "         ");
+                    printer.print((10 * j + 1, 6 * i + 5), "         ");
                 });
             }
         }
@@ -316,7 +321,7 @@ impl View for Board {
     }
 
     fn required_size(&mut self, _constraint: cursive::Vec2) -> cursive::Vec2 {
-        cursive::Vec2::new(30, 30)
+        cursive::Vec2::new(45, 40)
     }
 
     fn on_event(&mut self, event: Event) -> EventResult {
