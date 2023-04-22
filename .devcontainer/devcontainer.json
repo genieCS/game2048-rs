@@ -1,0 +1,14 @@
+{
+  "name": "Rust",
+  "dockerFile": "Dockerfile",
+  "extensions": [
+    "rust-lang.rust"
+  ],
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash"
+  },
+  "forwardPorts": [
+    8000
+  ],
+  "postCreateCommand": "cargo build"
+}
