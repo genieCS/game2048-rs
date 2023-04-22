@@ -159,9 +159,6 @@ impl Board {
             LRUD::Down => self.push_down(),
         };
         self.score += score;
-        if self.is_full() {
-            return self.gameover();
-        } 
         if moved {
             self.insert();
             if self.is_full() && !self.can_merge() {
