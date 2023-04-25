@@ -2,13 +2,17 @@
   "name": "Rust",
   "dockerFile": "Dockerfile",
   "extensions": [
-    "rust-lang.rust"
+    "rust-lang.rust-analyzer"
   ],
   "settings": {
-    "terminal.integrated.shell.linux": "/bin/bash"
+    "terminal.integrated.shell.linux": "/bin/bash",
+    "terminal.integrated.shellArgs.linux": ["-c"],
+    "terminal.integrated.shellArgs.linux": ["xterm"],
+    "terminal.integrated.env.linux": {
+      "TERM": "xterm",
+      "NCURSES_NO_UTF8_ACS": "1",
+      "NCURSES_NO_UTF8": "1"
+     },
   },
-  "forwardPorts": [
-    8000
-  ],
   "postCreateCommand": "cargo build"
 }
