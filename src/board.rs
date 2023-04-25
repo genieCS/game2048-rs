@@ -232,7 +232,7 @@ impl Board {
                 moved = true;
                 self.data[r][i] = self.data[r][j];
                 self.data[r][j] = 0;
-                i = j;
+                i += 1;
             }
         }
         moved
