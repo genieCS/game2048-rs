@@ -146,12 +146,12 @@ impl Board {
     }
 
     fn can_merge(&self) -> bool {
-        for i in 0..3 {
-            for j in 0..3 {
-                if self.data[i][j] == self.data[i + 1][j] {
+        for i in 0..4 {
+            for j in 0..4 {
+                if i != 3 && self.data[i][j] == self.data[i + 1][j] {
                     return true;
                 }
-                if self.data[i][j] == self.data[i][j + 1] {
+                if j != 3 && self.data[i][j] == self.data[i][j + 1] {
                     return true;
                 }
             }
