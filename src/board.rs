@@ -138,9 +138,9 @@ impl Board {
         self.score += score;
         if moved {
             self.insert();
-            if self.is_full() && !self.can_merge() {
-                return self.gameover();
-            }
+        }
+        if self.is_full() && !self.can_merge() {
+            return self.gameover();
         }
         self.event_result(self.score, lrud, moved)
     }
