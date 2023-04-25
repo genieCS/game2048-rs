@@ -1,13 +1,14 @@
+use crate::backend::backend;
 use crate::board::Board;
 use crate::history::History;
 use cursive::{
     view::{Nameable, Selector},
     views::{Button, Dialog, DummyView, LinearLayout, TextView},
-    Cursive, CursiveExt,
+    Cursive,
 };
 
 pub fn run() {
-    let mut siv: Cursive = Cursive::default();
+    let mut siv: Cursive = Cursive::new();
 
     siv.add_global_callback('q', |s| s.quit());
 
@@ -55,7 +56,9 @@ pub fn run() {
 
     siv.add_layer(view);
 
-    siv.run();
+    let siv = std::sync::Mutex::new(siv);
+
+    siv.lock().unwrap().run_with(|| backend());
 }
 
 fn new_game(s: &mut Cursive) {
