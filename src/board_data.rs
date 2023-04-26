@@ -113,9 +113,9 @@ impl BoardData {
 
     fn _push_left(&mut self) -> bool {
         let mut moved = false;
-        for r in 0..3 {
+        for r in 0..4 {
             let mut i = 0;
-            while i < 4 {
+            while i < 3 {
                 if self.data[r][i] != 0 {
                     i += 1;
                     continue;
