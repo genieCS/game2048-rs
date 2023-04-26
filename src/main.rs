@@ -1,4 +1,4 @@
-use game2048::game::run;
+use game2048_rs::game::run;
 
 fn main() {
     run();
