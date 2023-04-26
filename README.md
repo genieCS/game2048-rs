@@ -1,15 +1,25 @@
 # 2048 Game using Cursive
 
+![2048](https://user-images.githubusercontent.com/35099832/234502901-e1721cd9-eb64-4c52-84ac-ba0c5d5cd3e3.gif)
+
+
 This is a Rust implementation of the popular 2048 game using the [Cursive](https://github.com/gyscos/cursive) library for building terminal user interfaces. The game is played on a 4x4 grid where the player combines tiles with the same number to create a tile with a larger number. The goal is to create a tile with the number 2048.
 
 ## Installation
 
-To install the game, you need to have Rust and Cargo installed on your system. Once you have Rust and Cargo installed, you can clone the repository and run the following command:
+To install the game, if you don't have Rust and Cargo installed on your system, you can try it using GitHub Codespace. 
+If you have Rust and Cargo installed, you can clone the repository and run the following command:
 
 `cargo run --release
 `
 
 This will build and run the game in release mode.
+
+Or you can download the crate from crates.io with following command:
+
+`cargo install game2048
+`
+
 
 ## How to Play
 

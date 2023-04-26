@@ -1,5 +1,5 @@
 [package]
-name = "game2048-rs"
+name = "game2048"
 version = "0.1.0"
 edition = "2021"
 authors = ["Hyejin Lee <genie4cs@gmail.com>"]
