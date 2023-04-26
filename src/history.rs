@@ -1,22 +1,30 @@
 use cursive::{
-    theme::{Color, ColorStyle},
-    Printer, View,
+    theme::{ColorStyle},
+    Printer, View, XY,
 };
-use std::collections::VecDeque;
+use std::{collections::VecDeque };
 use crate::lrud::{LRUD};
 
 pub struct History {
     data: VecDeque<LRUD>,
+    background_color: ColorStyle,
+    main_color: ColorStyle,
+    capacity: usize,
 }
 
 
 impl History {
-    pub fn new() -> Self {
-        Self { data: VecDeque::new() }
+    pub fn new(background_color: ColorStyle, main_color: ColorStyle, capacity: usize) -> Self {
+        Self {
+            data: VecDeque::new(),
+            background_color,
+            main_color,
+            capacity,
+        }
     }
 
     pub fn update(&mut self, lrud: LRUD) {
-        if self.data.len() == 12 {
+        if self.data.len() == self.capacity {
             self.data.pop_front();
         }
         self.data.push_back(lrud);
@@ -29,23 +37,25 @@ impl History {
     }
 }
 
-impl Default for History {
-        fn default() -> Self {
-            Self::new()
-        }
-}
-
 impl View for History {
     fn draw(&self, printer: &Printer) {
-        let background_style = ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(255, 255, 255));
-        for (i, v) in self.data.iter().enumerate() {
-            printer.with_color(background_style, |printer| {
-                printer.print((0, self.data.len() - i), &v.to_string());
-            });
+        printer.with_color(self.main_color, |printer| {
+            printer.print(XY::new(0,0), " HISTORY ");
+        });
+        if self.data.is_empty() {
+            return
         }
+        printer.with_color(self.background_color, |printer| {
+            for (i, v) in self.data.iter().take(self.data.len() - 1).enumerate() {
+                printer.print((0, self.data.len() - i), &format!(" {} ", v));
+            }
+        });
+        printer.with_color(self.main_color, |printer| {
+            printer.print((0, 1), &format!(" {} ", self.data.back().unwrap()));
+        });
     }
 
     fn required_size(&mut self, _constraint: cursive::Vec2) -> cursive::Vec2 {
-        cursive::Vec2::new(13,13)
+        cursive::Vec2::new(13,self.capacity + 3)
     }
 }

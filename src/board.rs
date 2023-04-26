@@ -1,83 +1,75 @@
-use crate::history::History;
+use crate::board_data::BoardData;
 use crate::lrud::LRUD;
 use cursive::{
-    event::{Callback, Event, EventResult, Key},
     theme::{BaseColor, Color, ColorStyle},
-    views::{ Dialog, TextView},
-    Printer, View, XY,
+    Printer, View,
 };
-use rand::Rng;
 use maplit::hashmap;
 use std::collections::HashMap;
 
 #[derive(Debug)]
 pub struct Board {
-    pub data: [[u32; 4]; 4],
+    data: BoardData,
     theme: HashMap<u32, ColorStyle>,
-    score: u32,
+    background_style: ColorStyle,
 }
 
-impl Default for Board {
-    fn default() -> Self {
-        Self::new()
-    }
-}
 
 impl Board {
-    pub fn new() -> Self {
-        let data: [[u32; 4]; 4] = [[0; 4]; 4];
-        let theme = Self::traditional_colors();
-        let mut board = Self {
-            data,
-            theme,
-            score: 0,
-        };
-        board.insert();
-        board.insert();
-        board
+    pub fn new(background_style: ColorStyle) -> Self {
+        Self {
+            data: BoardData::new(),
+            theme: Self::traditional_colors(background_style),
+            background_style,
+        }
     }
 
-    fn traditional_colors() -> HashMap<u32, ColorStyle> {
+    fn traditional_colors(default_color: ColorStyle) -> HashMap<u32, ColorStyle> {
         hashmap!{
-            0 => ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(188, 173, 159)), // Default color for empty cells
+            0 => default_color,
             2 => ColorStyle::new(Color::Rgb(0, 0, 0), Color::Light(BaseColor::Yellow)), 
             4 => ColorStyle::new(Color::Rgb(0, 0, 0), Color::Light(BaseColor::Green)),
             8 => ColorStyle::new(Color::Rgb(0, 0, 0), Color::Light(BaseColor::Red)),
-            16 => ColorStyle::new(Color::Rgb(0, 0, 0), Color::Light(BaseColor::Blue)),
-            32 => ColorStyle::new(Color::Rgb(0, 0, 0), Color::Light(BaseColor::Magenta)),
-            64 => ColorStyle::new(Color::Rgb(0, 0, 0), Color::Light(BaseColor::Cyan)),
-            128 => ColorStyle::new(Color::Rgb(0, 0, 0), BaseColor::Red),
+            16 => ColorStyle::new(Color::Rgb(0, 0, 0), Color::Light(BaseColor::Cyan)),
+            32 => ColorStyle::new(Color::Rgb(0, 0, 0), Color::Light(BaseColor::Blue)),
+            64 => ColorStyle::new(Color::Rgb(0, 0, 0), Color::Light(BaseColor::Magenta)),
+            128 => ColorStyle::new(Color::Rgb(0, 0, 0), BaseColor::Yellow),
             256 => ColorStyle::new(Color::Rgb(0, 0, 0), BaseColor::Green),
-            512 => ColorStyle::new(Color::Rgb(0, 0, 0), BaseColor::Yellow),
-            1024 => ColorStyle::new(Color::Rgb(0, 0, 0), BaseColor::Blue),
-            2048 => ColorStyle::new(Color::Rgb(0, 0, 0), BaseColor::White),
+            512 => ColorStyle::new(Color::Rgb(0, 0, 0), BaseColor::Red),
+            1024 => ColorStyle::new(Color::Rgb(0, 0, 0), BaseColor::Cyan),
+            2048 => ColorStyle::new(Color::Rgb(0, 0, 0), BaseColor::Blue),
             4096 => ColorStyle::new(Color::Rgb(0, 0, 0), BaseColor::Magenta),
         }
     }
 
-    fn draw_background(&self, printer: &Printer) {
-        let background_style = ColorStyle::new(Color::Rgb(0, 0, 0), Color::Rgb(188, 173, 159));
-        for i in 0..4 {
-            printer.with_color(background_style, |printer| {
-                printer.print((0, 6 * i), "o---------o---------o---------o---------o");
-                for j in 0..5 {
-                    printer.print((10 * j, 6 * i + 1), "|");
-                    printer.print((10 * j, 6 * i + 2), "|");
-                    printer.print((10 * j, 6 * i + 3), "|");
-                    printer.print((10 * j, 6 * i + 4), "|");
-                    printer.print((10 * j, 6 * i + 5), "|");
+    pub fn reset(&mut self) {
+        *self = Self::new(self.background_style);
+    }
 
+    pub fn push(&mut self, lrud: LRUD) -> (u32, bool, bool) {
+        self.data.push(lrud)
+    }
+
+    fn draw_background(&self, printer: &Printer) {
+        let len = self.data.len();
+        for i in 0..(len + 1){
+            printer.with_color(self.background_style, |printer| {
+                printer.print((0, 6 * i), "o---------o---------o---------o---------o");
+                if i != len {
+                    for j in 0..(len + 1) {
+                        for k in 1..6 {
+                            printer.print((10 * j, 6 * i + k), "|");
+                        }
+                    }
                 }
             });
         }
-        printer.with_color(background_style, |printer| {
-            printer.print(XY::new(0, 24), "o---------o---------o---------o---------o");
-        });
     }
 
     fn draw_board(&self, printer: &Printer) {
-        for i in 0..4 {
-            for j in 0..4 {
+        let len = self.data.len();
+        for i in 0..len {
+            for j in 0..len {
                 let num = self.data[i][j];
                 let color_style = self.theme.get(&num).unwrap();
                 let num_str = &num.to_string();
@@ -92,200 +84,6 @@ impl Board {
             }
         }
     }
-
-    pub fn restart(&mut self) {
-        for i in 0..4 {
-            for j in 0..4 {
-                self.data[i][j] = 0;
-            }
-        }
-        self.score = 0;
-        self.insert();
-        self.insert();
-    }
-
-    fn insert(&mut self) {
-        let mut rng = rand::thread_rng();
-        let mut r = rng.gen_range(0..4);
-        let mut c = rng.gen_range(0..4);
-        while self.data[r][c] != 0 {
-            r = rng.gen_range(0..4);
-            c = rng.gen_range(0..4);
-        }
-        let vals = vec![2, 4];
-        let val = vals[rng.gen_range(0..2)];
-        self.data[r][c] = val;
-    }
-
-    fn is_full(&self) -> bool {
-        for i in 0..4 {
-            for j in 0..4 {
-                if self.data[i][j] == 0 {
-                    return false;
-                }
-            }
-        }
-        true
-    }
-
-    fn push(&mut self, lrud: LRUD) -> EventResult {
-        let (score, moved) = match lrud {
-            LRUD::Left => self.push_left(),
-            LRUD::Right => self.push_right(),
-            LRUD::Up => self.push_up(),
-            LRUD::Down => self.push_down(),
-        };
-        self.score += score;
-        if moved {
-            self.insert();
-        }
-        if self.is_full() && !self.can_merge() {
-            return self.gameover();
-        }
-        self.event_result(self.score, lrud, moved)
-    }
-
-    fn can_merge(&self) -> bool {
-        for i in 0..4 {
-            for j in 0..4 {
-                if i != 3 && self.data[i][j] == self.data[i + 1][j] {
-                    return true;
-                }
-                if j != 3 && self.data[i][j] == self.data[i][j + 1] {
-                    return true;
-                }
-            }
-        }
-        false
-    }
-
-    fn gameover(&self) -> EventResult {
-        EventResult::Consumed(Some(Callback::from_fn(move |s| {
-            s.add_layer(Dialog::info("Game Over!"));
-        })))
-    }
-
-    fn event_result(&self, score: u32, lrud: LRUD, moved: bool) -> EventResult {
-        EventResult::Consumed(Some(Callback::from_fn(move |s| {
-            s.call_on_name("score", |view: &mut TextView| {
-                view.set_content(score.to_string());
-            });
-            if moved {
-                s.call_on_name("history", |history: &mut History| {
-                    history.update(lrud)
-                });
-            }
-        })))
-    }
-
-    fn push_left(&mut self) -> (u32, bool) {
-        let score = self.merge_left();
-        let moved = self._push_left();
-        (score, score != 0 || moved)
-    }
-
-    fn merge_left(&mut self) -> u32 {
-        let mut score = 0;
-        for r in 0..4 {
-            let mut i = 0;
-            while i < 3 {
-                if self.data[r][i] == 0 {
-                    i += 1;
-                    continue;
-                }
-                let mut j = i + 1;
-                while j < 4 && self.data[r][j] == 0 {
-                    j += 1;
-                }
-                if j == 4 {
-                    break;
-                }
-                if self.data[r][i] == self.data[r][j] {
-                    self.data[r][i] *= 2;
-                    score += self.data[r][i];
-                    self.data[r][j] = 0;
-                    i = j + 1;
-                } else {
-                    i = j;
-                }
-            }
-        }
-        score
-    }
-
-    fn _push_left(&mut self) -> bool {
-        let mut moved = false;
-        for r in 0..4 {
-            let mut i = 0;
-            while i < 4 {
-                if self.data[r][i] != 0 {
-                    i += 1;
-                    continue;
-                }
-                let mut j = i + 1;
-                while j < 4 && self.data[r][j] == 0 {
-                    j += 1;
-                }
-                if j == 4 {
-                    break;
-                }
-                moved = true;
-                self.data[r][i] = self.data[r][j];
-                self.data[r][j] = 0;
-                i += 1;
-            }
-        }
-        moved
-    }
-
-    fn push_right(&mut self) -> (u32, bool) {
-        self.swap_lr();
-        let result = self.push_left();
-        self.swap_lr();
-        result
-    }
-
-    fn push_up(&mut self) -> (u32, bool) {
-        self.swap_diagnol();
-        let result = self.push_left();
-        self.swap_diagnol();
-        result
-    }
-
-    fn push_down(&mut self) -> (u32, bool) {
-        self.swap_ud();
-        let result = self.push_up();
-        self.swap_ud();
-        result
-    }
-
-    fn swap_lr(&mut self) {
-        for r in 0..4 {
-            for c in 0..2 {
-                self.data[r].swap(c, 3-c);
-            }
-        }
-    }
-
-    fn swap_diagnol(&mut self) {
-        for r in 0..4 {
-            for c in (r + 1)..4 {
-                let tmp = self.data[r][c];
-                self.data[r][c] = self.data[c][r];
-                self.data[c][r] = tmp;
-            }
-        }
-    }
-
-    fn swap_ud(&mut self) {
-        for r in 0..2 {
-            for c in 0..4 {
-                let tmp = self.data[r][c];
-                self.data[r][c] = self.data[3 - r][c];
-                self.data[3 - r][c] = tmp;
-            }
-        }
-    }
 }
 
 impl View for Board {
@@ -296,22 +94,5 @@ impl View for Board {
 
     fn required_size(&mut self, _constraint: cursive::Vec2) -> cursive::Vec2 {
         cursive::Vec2::new(45, 40)
-    }
-
-    fn on_event(&mut self, event: Event) -> EventResult {
-        match event {
-            Event::Char('l') | Event::Key(Key::Left) => self.push(LRUD::Left),
-            Event::Char('r') | Event::Key(Key::Right) => self.push(LRUD::Right),
-            Event::Char('u') | Event::Key(Key::Up) => self.push(LRUD::Up),
-            Event::Char('d') | Event::Key(Key::Down) => self.push(LRUD::Down),
-            _ => EventResult::Ignored,
-        }
-    }
-
-    fn take_focus(
-        &mut self,
-        _source: cursive::direction::Direction,
-    ) -> Result<EventResult, cursive::view::CannotFocus> {
-        Ok(EventResult::Consumed(None))
     }
 }
