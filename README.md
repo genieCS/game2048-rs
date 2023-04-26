@@ -4,12 +4,19 @@ This is a Rust implementation of the popular 2048 game using the [Cursive](https
 
 ## Installation
 
-To install the game, you need to have Rust and Cargo installed on your system. Once you have Rust and Cargo installed, you can clone the repository and run the following command:
+To install the game, if you don't have Rust and Cargo installed on your system, you can try it using GitHub Codespace. 
+If you have Rust and Cargo installed, you can clone the repository and run the following command:
 
 `cargo run --release
 `
 
 This will build and run the game in release mode.
+
+Or you can download the crate from crates.io with following command:
+
+`cargo install game2048
+`
+
 
 ## How to Play
 
