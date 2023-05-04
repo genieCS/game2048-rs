@@ -17,8 +17,7 @@ This will build and run the game in release mode.
 
 Or you can download the crate from crates.io with following command:
 
-`cargo install game2048
-`
+`cargo install game2048-rs`
 
 
 ## How to Play
